@@ -3,6 +3,13 @@ set -e
 sudo usermod --uid $UID minecraft
 sudo groupmod --gid $GUID minecraft
 
+# Change owner to minecraft.
+if [ "$SKIPCHMOD" != "true" ]; then
+  sudo chown -R minecraft:minecraft $SPIGOT_HOME/
+else
+  echo "SKIPCHMOD option enabled. If you have access issue with your files, disable it"
+fi
+
 if [ ! -e $SPIGOT_HOME/eula.txt ]; then
   if [ "$EULA" != "" ]; then
     echo "# Generated via Docker on $(date)" > $SPIGOT_HOME/eula.txt
@@ -19,18 +26,40 @@ if [ ! -e $SPIGOT_HOME/eula.txt ]; then
   fi
 fi
 
-#only build if jar file does not exist
-if [ ! -f $SPIGOT_HOME/spigot.jar ]; then
+# Some variables are mandatory.
+if [ -z "$REV" ]; then
+    REV="latest"
+fi
+
+# Some variables depend on other variables.
+
+# Creeper block disable is a feature of the Essentials plugin.
+if [ -n "$CREEPERBLOCKDISABLE" ]; then
+    if [ "$CREEPERBLOCKDISABLE" = "true" ]; then
+	     ESSENTIALS=true
+    fi
+fi
+
+# Force rebuild of spigot.jar if REV is latest.
+rm -f $SPIGOT_HOME/spigot-latest.jar
+
+# Only build a new spigot.jar if a jar for this REV does not already exist.
+if [ ! -f $SPIGOT_HOME/spigot-$REV.jar ]; then
   echo "Building spigot jar file, be patient"
   mkdir -p /tmp/buildSpigot
-  cd /tmp/buildSpigot
+  pushd /tmp/buildSpigot
   wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
   HOME=/tmp/buildSpigot java -jar BuildTools.jar --rev $REV
-  cp /tmp/buildSpigot/Spigot/Spigot-Server/target/spigot-*.jar $SPIGOT_HOME/spigot.jar
+  cp /tmp/buildSpigot/Spigot/Spigot-Server/target/spigot-*.jar $SPIGOT_HOME/spigot-$REV.jar
+  popd
   rm -rf /tmp/buildSpigot
   mkdir -p $SPIGOT_HOME/plugins
 fi
 
+# Select the spigot.jar for this particular rev.
+rm -f $SPIGOT_HOME/spigot.jar && ln -s $SPIGOT_HOME/spigot-$REV.jar $SPIGOT_HOME/spigot.jar
+
+# Install WorldBorder.
 if [ -n "$WORLDBORDER" ]; then
   if [ "$WORLDBORDER" = "true" ]; then
     echo "Downloading WorldBorder..."
@@ -191,13 +220,6 @@ if [ -n "$ICON" -a ! -e $SPIGOT_HOME/server-icon.png ]; then
     echo "Converting image to 64x64 PNG..."
     convert /tmp/icon.img -resize 64x64! $SPIGOT_HOME/server-icon.png
   fi
-fi
-
-# change owner to minecraft
-if [ "$SKIPCHMOD" != "true" ]; then
-  sudo chown -R minecraft:minecraft $SPIGOT_HOME/
-else
-  echo "SKIPCHMOD option enabled. If you have access issue with your files, disable it"
 fi
 
 cd $SPIGOT_HOME/
