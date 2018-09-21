@@ -1,7 +1,5 @@
 #!/bin/bash
 set -e
-sudo usermod --uid $UID minecraft
-sudo groupmod --gid $GUID minecraft
 
 # Change owner to minecraft.
 if [ "$SKIPCHMOD" != "true" ]; then
@@ -224,8 +222,6 @@ fi
 
 cd $SPIGOT_HOME/
 
-# su - minecraft -c "/spigot_run.sh server java $JVM_OPTS -jar spigot.jar"
-# Removing the call by minecraft because it does not have access to /proc
 /spigot_run.sh server java $JVM_OPTS -jar spigot.jar
 
 # fallback to root and run shell if spigot don't start/forced exit
