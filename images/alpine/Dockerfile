@@ -22,7 +22,7 @@ RUN apk add openjdk8-jre
 ENV SPIGOT_HOME /minecraft
 
 RUN addgroup -g 1000 -S minecraft && \
-  adduser -u 1000 -S minecraft -G minecraft
+  adduser -u 1000 -S minecraft -G minecraft -h /minecraft
 
 RUN echo "minecraft ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/minecraft
 

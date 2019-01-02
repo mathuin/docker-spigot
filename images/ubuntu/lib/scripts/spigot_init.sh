@@ -32,8 +32,8 @@ fi
 # Some variables depend on other variables.
 
 # Creeper block disable is a feature of the Essentials plugin.
-if [ -n "$CREEPERBLOCKDISABLE" ]; then
-    if [ "$CREEPERBLOCKDISABLE" = "true" ]; then
+if [ -n "$ESSENTIALS_CREEPERBLOCKDMG" ]; then
+    if [ "$ESSENTIALS_CREEPERBLOCKDMG" = "true" ]; then
 	     ESSENTIALS=true
     fi
 fi
@@ -68,6 +68,7 @@ if [ -n "$WORLDBORDER" ]; then
   fi
 fi
 
+# Install Dynmap.
 if [ -n "$DYNMAP" ]; then
   if [ "$DYNMAP" = "true" ]; then
     echo "Downloading Dynmap..."
@@ -90,6 +91,7 @@ if [ -n "$DYNMAP" ]; then
   fi
 fi
 
+# Install Essentials.
 if [ -n "$ESSENTIALS" ]; then
   if [ "$ESSENTIALS" = "true" ]; then
     echo "Downloading Essentials..."
@@ -114,6 +116,7 @@ if [ -n "$ESSENTIALS" ]; then
   fi
 fi
 
+# Install Clearlag.
 if [ -n "$CLEARLAG" ]; then
   if [ "$CLEARLAG" = "true" ]; then
     echo "Downloading ClearLag..."
@@ -124,6 +127,7 @@ if [ -n "$CLEARLAG" ]; then
   fi
 fi
 
+# Install PermissionsEx.
 if [ -n "$PERMISSIONSEX" ]; then
   if [ "$PERMISSIONSEX" = "true" ]; then
     echo "Downloading PermissionsEx..."

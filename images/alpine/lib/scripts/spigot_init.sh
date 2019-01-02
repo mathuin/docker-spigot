@@ -32,8 +32,8 @@ fi
 # Some variables depend on other variables.
 
 # Creeper block disable is a feature of the Essentials plugin.
-if [ -n "$CREEPERBLOCKDISABLE" ]; then
-    if [ "$CREEPERBLOCKDISABLE" = "true" ]; then
+if [ -n "$ESSENTIALS_CREEPERBLOCKDMG" ]; then
+    if [ "$ESSENTIALS_CREEPERBLOCKDMG" = "true" ]; then
 	     ESSENTIALS=true
     fi
 fi
